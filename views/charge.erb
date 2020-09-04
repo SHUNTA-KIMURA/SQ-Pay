@@ -1,0 +1,39 @@
+<h1 class="sq-pay">SQ Pay</h1>
+<div>
+<form action="/charge" method="post">
+ <input class="stored_value" type="text" name="stored_value" placeholder="入金額">
+ <div class="popup" id="js-popup">
+  <div class="popup-inner">
+    <h1>この金額でチャージしますか？</h1>
+    <input type="submit" value="Yes">
+    <div id="js-close-popup"><p>No</p></div>
+  </div>
+  <div class="black-background" id="js-black-bg"></div>
+ </div>
+</form>
+<div class="ok-text">
+  <button class="ok_button"  id="js-show-popup">OK</button>
+</div>
+<div>
+<%= current_user.balance %>
+</div>
+
+<script type="text/javascript">
+function popupImage() {
+  var popup = document.getElementById('js-popup');
+  if(!popup) return;
+  var closeBtn = document.getElementById('js-close-popup');
+  var showBtn = document.getElementById('js-show-popup');
+  var blackBg = document.getElementById('js-black-bg');
+  closePopUp(blackBg);
+  closePopUp(showBtn);
+  closePopUp(closeBtn)
+  function closePopUp(elem) {
+    if(!elem) return;
+    elem.addEventListener('click', function() {
+      popup.classList.toggle('is-show');
+    });
+  }
+}
+popupImage();
+</script>
