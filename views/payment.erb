@@ -1,1 +1,38 @@
-<h1>購入画面</h1>
+<div>
+<form action="/payment" method="post">
+ <input class="total" type="text" name="total" placeholder="支払い額">
+ <div class="popup" id="js-popup">
+  <div class="popup-inner">
+    <h1>これを購入しますか？</h1>
+    <input type="submit" value="Yes">
+    <div id="js-close-popup"><p>No</p></div>
+  </div>
+  <div class="black-background" id="js-black-bg"></div>
+ </div>
+</form>
+<div class="ok-text">
+  <button class="ok_button"  id="js-show-popup">OK</button>
+</div>
+<div>
+<%= current_user.balance %>
+</div>
+
+<script type="text/javascript">
+function popupImage() {
+  var popup = document.getElementById('js-popup');
+  if(!popup) return;
+  var closeBtn = document.getElementById('js-close-popup');
+  var showBtn = document.getElementById('js-show-popup');
+  var blackBg = document.getElementById('js-black-bg');
+  closePopUp(blackBg);
+  closePopUp(showBtn);
+  closePopUp(closeBtn)
+  function closePopUp(elem) {
+    if(!elem) return;
+    elem.addEventListener('click', function() {
+      popup.classList.toggle('is-show');
+    });
+  }
+}
+popupImage();
+</script>

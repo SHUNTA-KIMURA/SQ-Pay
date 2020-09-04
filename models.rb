@@ -48,5 +48,8 @@ class Owner < ActiveRecord::Base
 end
 
 class Payment < ActiveRecord::Base
+  validates :stored_value,
+  presence: true,
+  format: {with: /\A[0-9]+\z/}
   belongs_to :user
 end
