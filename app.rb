@@ -187,8 +187,14 @@ post '/invoice' do
 end
 
 get '/payment' do
+  user = current_user
+  @total=params[:total].to_i
   if !current_user.nil?
-    erb :payment
+    if user.balance<@total
+      redirect '/charge'
+    else
+      erb :payment
+    end
   else
     redirect '/signin'
   end
@@ -196,8 +202,8 @@ end
 
 post '/payment' do
   user = current_user
-  total = params[:total].to_i
-  user.balance -= total
-  user.save!
-  redirect '/home'
+  total=params[:total].to_i
+    user.balance -= total
+    user.save!
+    redirect '/home'
 end

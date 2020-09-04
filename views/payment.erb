@@ -1,20 +1,21 @@
 <div>
-<form action="/payment" method="post">
- <input class="total" type="text" name="total" placeholder="支払い額">
+<form action="/payment?total=<%= @total%>" method="post">
+ <h1>現在の合計金額:<%= current_user.balance %>円</h1>
+ <h1>支払い金額:<%= @total %>円</h1>
+ <a class="charge-button" href="charge">Charge</a><br>
  <div class="popup" id="js-popup">
   <div class="popup-inner">
     <h1>これを購入しますか？</h1>
-    <input type="submit" value="Yes">
-    <div id="js-close-popup"><p>No</p></div>
+    <input class="yes-button" type="submit" value="Yes">
+    <button class="no-button" id="js-close-popup">No</button>
   </div>
   <div class="black-background" id="js-black-bg"></div>
  </div>
 </form>
 <div class="ok-text">
-  <button class="ok_button"  id="js-show-popup">OK</button>
+  <button class="ok-button"  id="js-show-popup">OK</button>
 </div>
 <div>
-<%= current_user.balance %>
 </div>
 
 <script type="text/javascript">
