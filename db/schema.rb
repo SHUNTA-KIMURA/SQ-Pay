@@ -14,9 +14,11 @@ ActiveRecord::Schema.define(version: 2020_09_01_164934) do
 
   create_table "carts", force: :cascade do |t|
     t.integer "item_id"
+    t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["item_id"], name: "index_carts_on_item_id"
+    t.index ["user_id"], name: "index_carts_on_user_id"
   end
 
   create_table "charges", force: :cascade do |t|
@@ -73,7 +75,8 @@ ActiveRecord::Schema.define(version: 2020_09_01_164934) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.integer "balance"
+    t.boolean "is_owner", default: false
+    t.integer "balance", default: 0
     t.string "email"
     t.integer "shop_id"
     t.string "name"

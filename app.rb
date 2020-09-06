@@ -11,6 +11,10 @@ helpers do
   def current_user
     User.find_by(id: session[:user])
   end
+
+  def authorize
+    redirect '/signin' if current_user.nil?
+  end
 end
 
 get '/' do
@@ -25,8 +29,7 @@ post '/signup' do
   @user=User.create(
   email:params[:email],
   password:params[:password],
-  password_confirmation:params[:password_confirmation],
-  balance:0
+  password_confirmation:params[:password_confirmation]
   )
   if @user.persisted?
     session[:user]=@user.id
@@ -57,80 +60,71 @@ get '/signout' do
   redirect '/signin'
 end
 
-get '/owners/signup' do
-  erb :signup
-end
+# get '/owners/signup' do
+#   erb :signup
+# end
 
-post '/owners/signup' do
-  user=User.create(
-    email: params[:email],
-  password: params[:password],
-  password_confirmation: params[:password_confirmation]
-  )
-  if user.persisted?
-    session[:user]=user.id
-    redirect '/store'
-  end
-end
+# post '/owners/signup' do
+#   user=User.create(
+#     email: params[:email],
+#     password: params[:password],
+#     password_confirmation: params[:password_confirmation]
+#   )
+#   if user.persisted?
+#     session[:user]=user.id
+#     redirect '/store'
+#   end
+# end
 
-get '/owners/signin' do
-  erb :signin
-end
+# get '/owners/signin' do
+#   erb :signin
+# end
 
-post '/owners/signin' do
-  user=User.find_by(email: params[:email])
-  if user && user.authenticate(params[:password])
-    session[:user]=user.id
-    redirect '/store'
-  end
-end
+# post '/owners/signin' do
+#   user=User.find_by(email: params[:email])
+#   if user && user.authenticate(params[:password])
+#     session[:user]=user.id
+#     redirect '/store'
+#   end
+# end
 
-get '/owners/signout' do
-  session[:user]=nil
-  redirect '/owner/signin'
-end
+# get '/owners/signout' do
+#   session[:user]=nil
+#   redirect '/owner/signin'
+# end
 
 get '/success' do
-  if !current_user.nil?
-    erb :success
-  else
-    redirect '/signin'
-  end
+  authorize
+  erb :success
 end
 
 get '/fail' do
-  if !current_user.nil?
-    erb :fail
-  else
-    redirect '/signin'
-  end
+  authorize
+  erb :fail
 end
 
 get '/home' do
-  if !current_user.nil?
-    erb :home
-  else
-    redirect '/signin'
-  end
+  authorize
+  erb :home
 end
 
 post '/credit' do
-    redirect '/home'
+  authorize
+  redirect '/home'
 end
 
 get '/credit' do
-  if !current_user.nil?
-    erb :credit
-  else
-    redirect '/signin'
-  end
+  authorize
+  erb :credit
 end
 
 get '/signout' do
+  authorize
   erb :signout
 end
 
 post '/charge' do
+  authorize
   user = current_user
   stored_value = params[:stored_value].to_i
   user.balance += stored_value
@@ -139,71 +133,77 @@ post '/charge' do
 end
 
 get '/charge' do
-  if !current_user.nil?
-    erb :charge
-  else
-    redirect '/signin'
-  end
+  authorize
+  erb :charge
 end
 
 get '/payment/owners' do
-  if !current_user.nil?
-    erb :payment
-  else
-    redirect '/signin'
-  end
+  authorize
+  erb :payment
 end
 
 post '/payment/owners' do
-  if !current_user.nil?
-    redirect '/success'
-  else
-    redirect '/signin'
-  end
+  authorize
+  redirect '/success'
 end
 
-post '/store' do
-    redirect '/store'
-end
+ post '/store' do
+  authorize
+   redirect '/store'
+ end
 
 get '/store' do
-  if !current_user.nil?
-    erb :store
-  else
-    redirect '/signin'
-  end
-end
-
-get '/cart' do
-  if !current_user.nil?
-    erb :cart
-  else
-    redirect '/signin'
-  end
+  authorize
+  @items=Item.all
+  @cart = Cart.count
+  erb :store
 end
 
 post '/invoice' do
-    redirect '/store'
+  authorize
+  redirect '/store'
 end
 
 get '/payment' do
+  authorize
   user = current_user
   @total=params[:total].to_i
-  if !current_user.nil?
-    if user.balance<@total
+  authorize
+  if user.balance<@total
       redirect '/charge'
     else
       erb :payment
     end
-  else
-    redirect '/signin'
-  end
 end
 
 post '/payment' do
+  authorize
   user = current_user
   total=params[:total].to_i
     user.balance -= total
     user.save!
     redirect '/home'
+end
+
+get '/items/create' do
+  authorize
+  erb :item
+end
+
+post '/items/create' do
+  authorize
+  item=Item.create(
+    name: params[:name],
+    price: params[:price]
+  )
+  redirect '/items/create'
+end
+
+post '/carts/:item_id' do
+ authorize
+ cart=Cart.create(
+   item_id: params[:item_id],
+   user_id: current_user.id
+ )
+ redirect '/store'
 end
