@@ -1,2 +1,1 @@
 # SQ-Pay
-# SQ-Pay
