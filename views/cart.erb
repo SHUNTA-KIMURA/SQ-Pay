@@ -1,1 +1,13 @@
 <h1>カート内の商品の確認画面</h1>
+<div class="container">
+  <ul>
+    <% @carts.each do |cart|%>
+    <li>
+      <p><%= cart.item_id %></p>
+    </li>
+    <% end %>
+  </ul>
+</div>
+<form action="/invoice" method="post">
+  <input class="ok-button" type="submit" value="請求書作成">
+</form>

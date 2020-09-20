@@ -15,6 +15,7 @@ ActiveRecord::Schema.define(version: 2020_09_01_164934) do
   create_table "carts", force: :cascade do |t|
     t.integer "item_id"
     t.integer "user_id"
+    t.integer "count", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["item_id"], name: "index_carts_on_item_id"

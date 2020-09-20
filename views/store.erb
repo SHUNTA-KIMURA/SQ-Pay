@@ -1,4 +1,8 @@
-<a href="items/create"><img class="add_items" src="add_items.png"></a>
+<header>
+  <a href="items/create"><img class="add_items" src="add_items.png"></a>
+  <div class="items_count"><%= @cart_count %></div>
+  <a href="/cart"><img class="add_items" src="cart.png"></a>
+</header>
 <div class="container">
   <h1>商品一覧画面</h1>
   <ul>
@@ -6,11 +10,10 @@
     <li>
       <p><%= item.name %></p>
       <p><%= item.price %></p>
-      <form action="/carts/<%= item.id %>" method="post">
+      <form action="/carts/create/<%= item.id %>" method="post">
         <input class="ok-button" type="submit" value="カートに追加">
       </form>
     </li>
     <% end %>
-    <p><%= @cart %></p>
   </ul>
 </div>

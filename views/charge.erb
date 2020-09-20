@@ -1,38 +1,41 @@
 <div>
-<div class="balance">
-  <p>残金：<%= current_user.balance %>円</p>
-</div>
-<form class="charge" action="/charge" method="post">
- <input class="stored_value" type="text" name="stored_value" placeholder="入金額">
- <div class="popup" id="js-popup">
-  <div class="popup-inner">
-    <h1>この金額でチャージしますか？</h1>
-    <input class="yes-button" type="submit" value="Yes">
-    <button class="no-button" id="js-close-popup">No</button>
+  <div class="balance">
+    <p>残金：<%= current_user.balance %>円</p>
   </div>
-  <div class="black-background" id="js-black-bg"></div>
- </div>
-</form>
-<div class="ok-text">
-  <button class="ok_button"  id="js-show-popup">OK</button>
-</div>
+  <form class="charge" action="/charge" method="post">
+    <input class="stored_value" type="text" name="stored_value" placeholder="入金額">
+    <div class="popup" id="js-popup">
+      <div class="popup-inner">
+        <h1>この金額でチャージしますか？</h1>
+        <div class="button-container">
+          <input class="yes-button" type="submit" value="Yes">
+          <div class="no-button" id="js-close-popup">No</div>
+        </div>
+      </div>
+      <div class="black-background" id="js-black-bg"></div>
+    </div>
+  </form>
+  <div class="ok-text">
+    <button class="ok_button" id="js-show-popup">OK</button>
+  </div>
 
-<script type="text/javascript">
-function popupImage() {
-  var popup = document.getElementById('js-popup');
-  if(!popup) return;
-  var closeBtn = document.getElementById('js-close-popup');
-  var showBtn = document.getElementById('js-show-popup');
-  var blackBg = document.getElementById('js-black-bg');
-  closePopUp(blackBg);
-  closePopUp(showBtn);
-  closePopUp(closeBtn)
-  function closePopUp(elem) {
-    if(!elem) return;
-    elem.addEventListener('click', function() {
-      popup.classList.toggle('is-show');
-    });
-  }
-}
-popupImage();
-</script>
+  <script type="text/javascript">
+    function popupImage() {
+      var popup = document.getElementById('js-popup');
+      if (!popup) return;
+      var closeBtn = document.getElementById('js-close-popup');
+      var showBtn = document.getElementById('js-show-popup');
+      var blackBg = document.getElementById('js-black-bg');
+      closePopUp(blackBg);
+      closePopUp(showBtn);
+      closePopUp(closeBtn)
+
+      function closePopUp(elem) {
+        if (!elem) return;
+        elem.addEventListener('click', function () {
+          popup.classList.toggle('is-show');
+        });
+      }
+    }
+    popupImage();
+  </script>

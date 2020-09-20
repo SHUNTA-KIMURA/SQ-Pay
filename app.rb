@@ -155,7 +155,13 @@ end
 get '/store' do
   authorize
   @items=Item.all
-  @cart = Cart.count
+  carts = Cart.where(user_id: current_user.id)
+  puts carts
+  @cart_count = 0
+  carts.each do |cart|
+    @cart_count += cart.count
+  end
+  puts @cart_count
   erb :store
 end
 
@@ -199,11 +205,57 @@ post '/items/create' do
   redirect '/items/create'
 end
 
-post '/carts/:item_id' do
+post '/carts/create/:item_id' do
  authorize
- cart=Cart.create(
+ cart = Cart.find_by(item_id: params[:item_id],user_id: current_user.id)
+ if cart
+  cart.count += 1
+  cart.save!
+ else
+  new_cart = Cart.create(
    item_id: params[:item_id],
    user_id: current_user.id
  )
+ new_cart.count += 1
+  new_cart.save!
+ end
+
  redirect '/store'
+end
+
+get '/cart' do
+  authorize
+  @carts = Cart.where(user_id: current_user.id)
+  @items = []
+  # @carts.each do |cart|
+  #   items = @carts.where(item_id: cart.item_id)
+  #   count = items.count
+
+  #   item = {
+  #     id: 1,
+  #     name: "aa",
+  #     count: 2,
+  #     total: 240
+  #   }
+  #   @items.push(item)
+  # end
+
+  # @items = [
+  #   {
+  #     id: 1,
+  #     name: "aa",
+  #     count: 2,
+  #     total: 240
+  #   },
+  # ]
+  erb :cart
+end
+
+post '/invoice' do
+  authorize
+  user = current_user
+  total=params[:total].to_i
+    user.balance -= total
+    user.save!
+    redirect '/home'
 end
