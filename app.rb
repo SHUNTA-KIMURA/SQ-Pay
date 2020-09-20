@@ -137,15 +137,15 @@ get '/charge' do
   erb :charge
 end
 
-get '/payment/owners' do
-  authorize
-  erb :payment
-end
+# get '/payment/owners' do
+#   authorize
+#   erb :payment
+# end
 
-post '/payment/owners' do
-  authorize
-  redirect '/success'
-end
+# post '/payment/owners' do
+#   authorize
+#   redirect '/success'
+# end
 
  post '/store' do
   authorize
@@ -155,40 +155,47 @@ end
 get '/store' do
   authorize
   @items=Item.all
-  carts = Cart.where(user_id: current_user.id)
-  puts carts
+  payments = Payment.where(user_id: current_user.id)
+  payment = payments.last
+  if payment
+    carts =Cart.where(user_id: current_user.id).where('updated_at >= ?', payment.updated_at)
+  else
+    carts =Cart.where(user_id: current_user.id)
+  end
   @cart_count = 0
   carts.each do |cart|
     @cart_count += cart.count
   end
-  puts @cart_count
   erb :store
 end
 
-post '/invoice' do
-  authorize
-  redirect '/store'
-end
-
-get '/payment' do
+get '/payment/:owner_id' do
   authorize
   user = current_user
-  @total=params[:total].to_i
-  authorize
+  @owner_id = params[:owner_id].to_i
+  payment = Payment.find_by(user_id: @owner_id, completed: false)
+  @total = payment.total
   if user.balance<@total
-      redirect '/charge'
-    else
-      erb :payment
-    end
+    redirect '/charge'
+  else
+    erb :payment
+  end
 end
 
-post '/payment' do
+post '/payment/:owner_id' do
   authorize
   user = current_user
-  total=params[:total].to_i
-    user.balance -= total
-    user.save!
-    redirect '/home'
+  @owner_id = params[:owner_id].to_i
+  payment = Payment.find_by(user_id: @owner_id, completed: false)
+  user.balance -= payment.total
+  user.save!
+  UserPayments.create(
+    user_id: current_user.id,
+    payment_id: payment.id
+  )
+  payment.completed = true
+  payment.save!
+  redirect '/home'
 end
 
 get '/items/create' do
@@ -207,7 +214,13 @@ end
 
 post '/carts/create/:item_id' do
  authorize
- cart = Cart.find_by(item_id: params[:item_id],user_id: current_user.id)
+ payments = Payment.where(user_id: current_user.id)
+  payment = payments.last
+  if payment
+     cart = Cart.find_by(item_id: params[:item_id], user_id: current_user.id).where('updated_at >= ?', payment.updated_at)
+  else
+    cart = Cart.find_by(item_id: params[:item_id], user_id: current_user.id)
+  end
  if cart
   cart.count += 1
   cart.save!
@@ -227,45 +240,34 @@ get '/cart' do
   authorize
   @carts = Cart.where(user_id: current_user.id)
   @purchases = []
+  @all_total = 0
   @carts.each do |cart|
     item = Item.find_by(id: cart.item_id)
     data = {
-      item_id: cart.item_id,
+      name: item.name,
       price: item.price,
       count: cart.count,
       total: item.price*cart.count
     }
+    @all_total += data[:total]
     @purchases.push(data)
   end
-  # @carts.each do |cart|
-  #   items = @carts.where(item_id: cart.item_id)
-  #   count = items.count
-
-  #   item = {
-  #     id: 1,
-  #     name: "aa",
-  #     count: 2,
-  #     total: 240
-  #   }
-  #   @items.push(item)
-  # end
-
-  # @items = [
-  #   {
-  #     id: 1,
-  #     name: "aa",
-  #     count: 2,
-  #     total: 240
-  #   },
-  # ]
   erb :cart
 end
 
 post '/invoice' do
   authorize
-  user = current_user
-  total=params[:total].to_i
-    user.balance -= total
-    user.save!
-    redirect '/home'
+  carts = Cart.where(user_id: current_user.id)
+  all_total = 0
+  carts.each do |cart|
+    item = Item.find_by(id: cart.item_id)
+    all_total += item.price*cart.count
+  end
+  payment=Payment.find_by(user_id: current_user.id, completed: false)
+  unless payment
+    current_user.payments.create(
+      total: all_total
+    )
+  end
+  redirect '/store'
 end

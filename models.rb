@@ -14,6 +14,7 @@ class User < ActiveRecord::Base
   has_many :credits
   has_many :charges
   has_many :payments
+  has_many :user_payments
 end
 
 class Credit < ActiveRecord::Base
@@ -33,6 +34,7 @@ end
 class Cart < ActiveRecord::Base
   belongs_to :item
   belongs_to :owner
+  belongs_to :payment
 end
 
 class Charge < ActiveRecord::Base
@@ -48,8 +50,12 @@ class Owner < ActiveRecord::Base
 end
 
 class Payment < ActiveRecord::Base
-  validates :stored_value,
-  presence: true,
-  format: {with: /\A[0-9]+\z/}
   belongs_to :user
+  belongs_to :user_payment
+  has_many :carts
+end
+
+class UserPayments < ActiveRecord::Base
+  belongs_to :user
+  belongs_to :payment
 end

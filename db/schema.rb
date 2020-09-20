@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_23_053201) do
+ActiveRecord::Schema.define(version: 2020_09_20_065729) do
 
   create_table "carts", force: :cascade do |t|
     t.integer "item_id"
@@ -18,7 +18,9 @@ ActiveRecord::Schema.define(version: 2020_08_23_053201) do
     t.integer "count", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "payment_id"
     t.index ["item_id"], name: "index_carts_on_item_id"
+    t.index ["payment_id"], name: "index_carts_on_payment_id"
     t.index ["user_id"], name: "index_carts_on_user_id"
   end
 
@@ -62,7 +64,7 @@ ActiveRecord::Schema.define(version: 2020_08_23_053201) do
 
   create_table "payments", force: :cascade do |t|
     t.integer "total"
-    t.boolean "completed"
+    t.boolean "completed", default: false
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -73,6 +75,15 @@ ActiveRecord::Schema.define(version: 2020_08_23_053201) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "user_payments", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "payment_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["payment_id"], name: "index_user_payments_on_payment_id"
+    t.index ["user_id"], name: "index_user_payments_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
