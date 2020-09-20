@@ -1,12 +1,21 @@
 <h1>カート内の商品の確認画面</h1>
 <div class="container">
-  <ul>
-    <% @carts.each do |cart|%>
-    <li>
-      <p><%= cart.item_id %></p>
-    </li>
+  <table class="final_check">
+    <tr>
+      <th>Item_id</th>
+      <th>値段</th>
+      <th>個数</th>
+      <th>合計</th>
+    </tr>
+    <% @purchases.each do |purchase|%>
+    <tr>
+      　<td><%= purchase[:item_id] %></td>
+      　<td><%= purchase[:price] %></td>
+      　<td><%= purchase[:count] %></td>
+      　<td><%= purchase[:total] %></td>
+    </tr>
     <% end %>
-  </ul>
+  </table>
 </div>
 <form action="/invoice" method="post">
   <input class="ok-button" type="submit" value="請求書作成">

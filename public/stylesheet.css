@@ -293,3 +293,25 @@
   margin-right: 26px;
   font-size: 40px;
 }
+
+.final_check {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+}
+
+.final_check tr {
+  border-bottom: solid 1px #eee;
+  cursor: pointer;
+}
+
+.final_check tr:hover {
+  background-color: #d4f0fd;
+}
+
+.final_check th,
+.final_check td {
+  text-align: center;
+  width: 25%;
+  padding: 15px 0;
+}

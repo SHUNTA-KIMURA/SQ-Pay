@@ -226,7 +226,17 @@ end
 get '/cart' do
   authorize
   @carts = Cart.where(user_id: current_user.id)
-  @items = []
+  @purchases = []
+  @carts.each do |cart|
+    item = Item.find_by(id: cart.item_id)
+    data = {
+      item_id: cart.item_id,
+      price: item.price,
+      count: cart.count,
+      total: item.price*cart.count
+    }
+    @purchases.push(data)
+  end
   # @carts.each do |cart|
   #   items = @carts.where(item_id: cart.item_id)
   #   count = items.count
