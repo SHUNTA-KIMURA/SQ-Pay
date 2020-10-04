@@ -214,13 +214,7 @@ end
 
 post '/carts/create/:item_id' do
  authorize
- payments = Payment.where(user_id: current_user.id)
-  payment = payments.last
-  if payment
-     cart = Cart.find_by(item_id: params[:item_id], user_id: current_user.id).where('updated_at >= ?', payment.updated_at)
-  else
-    cart = Cart.find_by(item_id: params[:item_id], user_id: current_user.id)
-  end
+  cart = Cart.find_by(item_id: params[:item_id], user_id: current_user.id, completed: false)
  if cart
   cart.count += 1
   cart.save!
@@ -238,7 +232,7 @@ end
 
 get '/cart' do
   authorize
-  @carts = Cart.where(user_id: current_user.id)
+  @carts = Cart.where(user_id: current_user.id, completed: false)
   @purchases = []
   @all_total = 0
   @carts.each do |cart|
@@ -257,7 +251,7 @@ end
 
 post '/invoice' do
   authorize
-  carts = Cart.where(user_id: current_user.id)
+  carts = Cart.where(user_id: current_user.id, completed: false)
   all_total = 0
   carts.each do |cart|
     item = Item.find_by(id: cart.item_id)
