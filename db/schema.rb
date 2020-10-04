@@ -19,7 +19,7 @@ ActiveRecord::Schema.define(version: 2020_10_04_015903) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "payment_id"
-    t.boolean "completed"
+    t.boolean "completed", default: false
     t.index ["item_id"], name: "index_carts_on_item_id"
     t.index ["payment_id"], name: "index_carts_on_payment_id"
     t.index ["user_id"], name: "index_carts_on_user_id"
