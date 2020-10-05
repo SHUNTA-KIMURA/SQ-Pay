@@ -175,6 +175,7 @@ get '/payment/:owner_id' do
   @owner_id = params[:owner_id].to_i
   payment = Payment.where(user_id: @owner_id).find_by(completed: false)
   if payment
+    puts payment
     @total = payment.total
     if user.balance<@total
       redirect '/charge'
@@ -259,15 +260,6 @@ end
 
 post '/invoice' do
   authorize
-<<<<<<< HEAD
-=======
-  carts = Cart.where(user_id: current_user.id, completed: false)
-  all_total = 0
-  carts.each do |cart|
-    item = Item.find_by(id: cart.item_id)
-    all_total += item.price*cart.count
-  end
->>>>>>> 08121428cb7e04e50884c4f3135901651d26aae6
   payment=Payment.find_by(user_id: current_user.id, completed: false)
   unless payment
     carts = Cart.where(user_id: current_user.id, completed: false)
