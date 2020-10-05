@@ -175,13 +175,14 @@ get '/payment/:owner_id' do
   @owner_id = params[:owner_id].to_i
   payment = Payment.where(user_id: @owner_id).find_by(completed: false)
   if payment
-    puts payment
     @total = payment.total
     if user.balance<@total
       redirect '/charge'
     else
       erb :payment
     end
+  else
+    erb :fail
   end
 end
 
