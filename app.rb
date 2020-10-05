@@ -183,7 +183,7 @@ get '/payment/:owner_id' do
       erb :payment
     end
   else
-    erb :fail
+    redirect '/fail'
   end
 end
 

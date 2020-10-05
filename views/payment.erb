@@ -2,7 +2,7 @@
   <form action="/payment/<%=@owner_id%>" method="post">
     <h1>現在の合計金額:<%= current_user.balance %>円</h1>
     <h1>支払い金額:<%= @total %>円</h1>
-    <a class="charge-button" href="charge">Charge</a><br>
+    <a class="charge-button" href="/charge">Charge</a><br>
     <div class="popup" id="js-popup">
       <div class="popup-inner">
         <h1>これを購入しますか？</h1>
